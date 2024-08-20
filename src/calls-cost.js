@@ -39,6 +39,39 @@
  * @returns {CallsResponse}  - Processed information
 */
 
-function callsCost(calls) { }
+function callsCost(calls) {
+  const callsDetails = calls.reduce((acc, curr) => {
+    if (curr.type.includes('National') || curr.type.includes('International') || curr.type.includes('Local')) {
+      const costByType = {
+        International: { fst: 7.56, rst: 3.03 },
+        National: { fst: 1.20, rst: 0.48 },
+        Local: { fst: 0.2, rst: 0.2 },
+      };
+    
+      const callCost = curr.duration >= 3 
+        ? (3 * costByType[curr.type].fst) + (curr.duration - 3) * costByType[curr.type].rst
+        : curr.duration * costByType[curr.type].fst;
+
+      const callDetail = {
+        identifier: curr.identifier,
+        type: curr.type,
+        duration: curr.duration,
+        callCost: +callCost.toFixed(2),
+      };
+
+      acc.totalCalls += 1;
+      acc.total += callDetail.callCost;
+      acc.callsDetails.push(callDetail);
+
+      acc.total = +acc.total.toFixed(2);
+
+      return acc;
+    }
+
+    return acc;
+  }, { totalCalls: 0, total: 0, callsDetails: [] });
+
+  return callsDetails;
+}
 
 module.exports = callsCost;

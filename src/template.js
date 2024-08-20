@@ -19,6 +19,27 @@
  * @returns {string}  - Formatted string covering the template
 */
 
-function template(model, character, message) { }
+function template(model, character, message) {
+  if (!model.includes(character)) return 'Invalid parameters';
+  if (!message) return 'Invalid parameters';
+
+  return model.split('').filter(char => char !== '(' && char !== ')' && char !== '-').reduce((acc, curr, index) => {
+    if (message[index] && curr === character) {
+      acc += message[index];
+    } else {
+      acc += curr;
+    }
+
+    if (index === model.length - 5) {
+      const firstPart = acc.slice(0, 3);
+      const secondPart = acc.slice(3, 6);
+      const thirdPart = acc.slice(6, 9);
+      const fourthPart = acc.slice(9, 11);
+      acc = `(${firstPart})${secondPart}-${thirdPart}-${fourthPart}`;
+    }
+
+    return acc;
+  }, '');
+}
 
 module.exports = template;
